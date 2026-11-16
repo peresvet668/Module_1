@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-	tryCount := 10 //количество попыток
+	tryCount := 10 //количество попыток угадывания
 	maxNum := 100  //максимальное число
 
 	winNum := genWinNum(maxNum)
