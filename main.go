@@ -9,17 +9,16 @@ import (
 	"strings"
 )
 
-var tryCount int //количество попыток
-var maxNum int   //максимальное число
-
 func main() {
 
-	tryCount = 10
-	maxNum = 100
+	tryCount := 10 //количество попыток
+	maxNum := 100  //максимальное число
 
 	winNum := genWinNum(maxNum)
 
 	reader := bufio.NewReader(os.Stdin)
+
+	var history []int
 
 	fmt.Println("🦆💨 Игра началась! ✨")
 	fmt.Printf("🎰 Я загадал число от 1 до %d! У тебя %d попыток чтобы угадать его 🎲\n", maxNum, tryCount)
@@ -34,6 +33,8 @@ func main() {
 			continue
 		}
 
+		history = append(history, userNum) //записываем в слайс введённое число
+
 		if userNum == winNum { // Сравниваем введённое с загаданным
 			fmt.Println("💃🥁 Ого, ты угадал! 🎈👑")
 			return
@@ -42,6 +43,22 @@ func main() {
 		} else {
 			fmt.Println("Ноу, моё число меньше 👇")
 		}
+
+		diff := winNum - userNum //вычисляем насколько далеко значение
+
+		if diff < 0 {
+			diff = -diff //если число больше, то нам надо избавиться от минуса
+		}
+
+		if diff <= 5 {
+			fmt.Println(" 🌋 Горячо! 🌡🔥")
+		} else if diff <= 15 {
+			fmt.Println(" 🌄 Тепло! 🌤🐝")
+		} else {
+			fmt.Println(" 🗻 Холодно! ⛄❄")
+		}
+
+		fmt.Printf("Твои попытки: %v\n\n", history)
 	}
 
 	fmt.Printf("\n 🦆💨 Попытки кончились, ты не угадал(( число было: %d\n", winNum)
