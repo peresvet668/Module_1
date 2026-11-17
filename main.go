@@ -3,14 +3,14 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"math/rand/v2"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	"errors"
-	"io"
 )
 
 // Цвета для терминала (ANSI-escape коды)
@@ -37,7 +37,7 @@ func main() {
 			fmt.Println("\nВвод завершён. До встречи! 👋")
 			return
 		}
-		
+
 		winNum := genWinNum(maxNum)
 		var history []int
 		isWin := false
@@ -52,14 +52,14 @@ func main() {
 
 			userNum, err := userEnter(reader)
 			if err != nil {
-    			if errors.Is(err, io.EOF) {
-        			fmt.Println("\nВвод завершён. До встречи! 👋")
-       				return
-    			}
+				if errors.Is(err, io.EOF) {
+					fmt.Println("\nВвод завершён. До встречи! 👋")
+					return
+				}
 
-    			fmt.Println("Нужно ввести целое число 🤓")
-    			tries-- //откат попытки
-    			continue
+				fmt.Println("Нужно ввести целое число 🤓")
+				tries-- //откат попытки
+				continue
 			}
 
 			history = append(history, userNum) // записываем в слайс введённое число
@@ -101,7 +101,7 @@ func chooseDifficulty(reader *bufio.Reader) (int, int, error) {
 			if errors.Is(err, io.EOF) {
 				return 0, 0, err
 			}
-			
+
 			fmt.Println("Ошибка! Введи цифру 1, 2 или 3.\n")
 			continue
 		}
