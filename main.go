@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"errors"
+	"io"
 )
 
 // Цвета для терминала (ANSI-escape коды)
@@ -30,7 +32,12 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		maxNum, tryCount := chooseDifficulty(reader)
+		maxNum, tryCount, err := chooseDifficulty(reader)
+		if err != nil {
+			fmt.Println("\nВвод завершён. До встречи! 👋")
+			return
+		}
+		
 		winNum := genWinNum(maxNum)
 		var history []int
 		isWin := false
@@ -45,9 +52,14 @@ func main() {
 
 			userNum, err := userEnter(reader)
 			if err != nil {
-				fmt.Println("Нужно ввести целое число 🤓")
-				tries-- // откат попытки
-				continue
+    			if errors.Is(err, io.EOF) {
+        			fmt.Println("\nВвод завершён. До встречи! 👋")
+       				return
+    			}
+
+    			fmt.Println("Нужно ввести целое число 🤓")
+    			tries-- //откат попытки
+    			continue
 			}
 
 			history = append(history, userNum) // записываем в слайс введённое число
@@ -76,7 +88,7 @@ func main() {
 }
 
 // chooseDifficulty отвечает за выбор уровня сложности (Фича 4)
-func chooseDifficulty(reader *bufio.Reader) (int, int) {
+func chooseDifficulty(reader *bufio.Reader) (int, int, error) {
 	for {
 		fmt.Println("Выбери уровень сложности:")
 		fmt.Println("1 — Easy (числа 1–50, 15 попыток)")
@@ -86,17 +98,21 @@ func chooseDifficulty(reader *bufio.Reader) (int, int) {
 
 		choice, err := userEnter(reader)
 		if err != nil {
+			if errors.Is(err, io.EOF) {
+				return 0, 0, err
+			}
+			
 			fmt.Println("Ошибка! Введи цифру 1, 2 или 3.\n")
 			continue
 		}
 
 		switch choice {
 		case 1:
-			return 50, 15
+			return 50, 15, nil
 		case 2:
-			return 100, 10
+			return 100, 10, nil
 		case 3:
-			return 200, 5
+			return 200, 5, nil
 		default:
 			fmt.Println("Нет такого варианта. Введи 1, 2 или 3.\n")
 		}
